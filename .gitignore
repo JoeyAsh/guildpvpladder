@@ -1,0 +1,32 @@
+# IDE & Editor
+.idea/
+.vscode/
+*.suo
+*.user
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# WoW Addon – local test deployment symlink/copy
+deploy/
+
+# Packager output (e.g. BigWigs Packager, wago-action)
+*.zip
+release/
+.release/
+
+# Libs (vendored via packager or submodules – not hand-edited)
+Libs/LibStub/
+Libs/AceDB-3.0/
+Libs/LibDBIcon-1.0/
+Libs/CallbackHandler-1.0/
+
+# Luacheck / lint cache
+.luacheck_cache
+luac.out
+
+# Packaging / CI secrets
+.env
+secrets/

@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find /d/Repos/guildpvpladder -not -path */.git/* -not -path */.idea/* -type d)",
+      "Bash(git:*)",
+      "Skill(update-config)"
+    ],
+    "defaultMode": "bypassPermissions"
+  }
+}
