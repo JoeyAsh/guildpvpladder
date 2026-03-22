@@ -1,0 +1,347 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\FrameXML\UI.xsd">
+
+    <Frame name="GuildPvPLadderFrame"
+           parent="UIParent"
+           movable="true"
+           enableMouse="true"
+           resizable="false"
+           toplevel="true"
+           frameStrata="DIALOG"
+           hidden="true"
+           clampedToScreen="true"
+           inherits="BackdropTemplate">
+        <Size x="550" y="400"/>
+        <Anchors>
+            <Anchor point="CENTER" relativeTo="UIParent" relativePoint="CENTER"/>
+        </Anchors>
+        <Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background"
+                  edgeFile="Interface\DialogFrame\UI-DialogBox-Border"
+                  tile="true">
+            <BackgroundInsets>
+                <AbsInset left="11" right="12" top="12" bottom="11"/>
+            </BackgroundInsets>
+            <TileSize>
+                <AbsValue val="32"/>
+            </TileSize>
+            <EdgeSize>
+                <AbsValue val="32"/>
+            </EdgeSize>
+        </Backdrop>
+
+        <Frames>
+            <!-- Title Bar -->
+            <Frame name="$parentTitleBar" parentKey="titleBar">
+                <Size x="550" y="28"/>
+                <Anchors>
+                    <Anchor point="TOP" relativePoint="TOP" x="0" y="-4"/>
+                </Anchors>
+                <Frames>
+                    <FontString name="$parentText" parentKey="text"
+                                inherits="GameFontHighlight"
+                                text="Guild PvP Ladder">
+                        <Anchors>
+                            <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0"/>
+                        </Anchors>
+                    </FontString>
+                </Frames>
+            </Frame>
+
+            <!-- Close Button -->
+            <Button name="GuildPvPLadderFrameClose"
+                    inherits="UIPanelCloseButton"
+                    parentKey="closeButton">
+                <Anchors>
+                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-4" y="-4"/>
+                </Anchors>
+                <Scripts>
+                    <OnClick>
+                        GuildPvPLadder.UI:Hide()
+                    </OnClick>
+                </Scripts>
+            </Button>
+
+            <!-- Column Headers -->
+            <Frame name="$parentHeaders" parentKey="headers">
+                <Size x="520" y="24"/>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="15" y="-32"/>
+                </Anchors>
+                <Frames>
+                    <!-- # Column -->
+                    <Button name="$parentRank" parentKey="rankBtn">
+                        <Size x="30" y="22"/>
+                        <Anchors>
+                            <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0"/>
+                        </Anchors>
+                        <NormalFont inherits="GameFontNormalSmall" color="1 0.82 0"/>
+                        <NormalText>#</NormalText>
+                        <Scripts>
+                            <OnClick>
+                                GuildPvPLadder.UI:SortBy("rank")
+                            </OnClick>
+                        </Scripts>
+                    </Button>
+
+                    <!-- Name Column -->
+                    <Button name="$parentName" parentKey="nameBtn">
+                        <Size x="120" y="22"/>
+                        <Anchors>
+                            <Anchor point="LEFT" relativePoint="LEFT" x="30" y="0"/>
+                        </Anchors>
+                        <NormalFont inherits="GameFontNormalSmall" color="1 0.82 0"/>
+                        <NormalText>Name</NormalText>
+                        <Scripts>
+                            <OnClick>
+                                GuildPvPLadder.UI:SortBy("name")
+                            </OnClick>
+                        </Scripts>
+                    </Button>
+
+                    <!-- Guild Rank Column -->
+                    <Button name="$parentGRank" parentKey="grankBtn">
+                        <Size x="80" y="22"/>
+                        <Anchors>
+                            <Anchor point="LEFT" relativePoint="LEFT" x="150" y="0"/>
+                        </Anchors>
+                        <NormalFont inherits="GameFontNormalSmall" color="1 0.82 0"/>
+                        <NormalText>G.Rank</NormalText>
+                        <Scripts>
+                            <OnClick>
+                                GuildPvPLadder.UI:SortBy("guildRank")
+                            </OnClick>
+                        </Scripts>
+                    </Button>
+
+                    <!-- 2v2 Column -->
+                    <Button name="$parent2v2" parentKey="twov2Btn">
+                        <Size x="50" y="22"/>
+                        <Anchors>
+                            <Anchor point="LEFT" relativePoint="LEFT" x="230" y="0"/>
+                        </Anchors>
+                        <NormalFont inherits="GameFontNormalSmall" color="1 0.82 0"/>
+                        <NormalText>2v2</NormalText>
+                        <Scripts>
+                            <OnClick>
+                                GuildPvPLadder.UI:SortBy("2v2")
+                            </OnClick>
+                        </Scripts>
+                    </Button>
+
+                    <!-- 3v3 Column -->
+                    <Button name="$parent3v3" parentKey="threev3Btn">
+                        <Size x="50" y="22"/>
+                        <Anchors>
+                            <Anchor point="LEFT" relativePoint="LEFT" x="280" y="0"/>
+                        </Anchors>
+                        <NormalFont inherits="GameFontNormalSmall" color="1 0.82 0"/>
+                        <NormalText>3v3</NormalText>
+                        <Scripts>
+                            <OnClick>
+                                GuildPvPLadder.UI:SortBy("3v3")
+                            </OnClick>
+                        </Scripts>
+                    </Button>
+
+                    <!-- RBG Column -->
+                    <Button name="$parentRBG" parentKey="rbgBtn">
+                        <Size x="50" y="22"/>
+                        <Anchors>
+                            <Anchor point="LEFT" relativePoint="LEFT" x="330" y="0"/>
+                        </Anchors>
+                        <NormalFont inherits="GameFontNormalSmall" color="1 0.82 0"/>
+                        <NormalText>RBG</NormalText>
+                        <Scripts>
+                            <OnClick>
+                                GuildPvPLadder.UI:SortBy("rbg")
+                            </OnClick>
+                        </Scripts>
+                    </Button>
+
+                    <!-- Solo Column -->
+                    <Button name="$parentSolo" parentKey="soloBtn">
+                        <Size x="50" y="22"/>
+                        <Anchors>
+                            <Anchor point="LEFT" relativePoint="LEFT" x="380" y="0"/>
+                        </Anchors>
+                        <NormalFont inherits="GameFontNormalSmall" color="1 0.82 0"/>
+                        <NormalText>Solo</NormalText>
+                        <Scripts>
+                            <OnClick>
+                                GuildPvPLadder.UI:SortBy("soloshuffle")
+                            </OnClick>
+                        </Scripts>
+                    </Button>
+
+                    <!-- PvP Rank Column -->
+                    <Button name="$parentPvPRank" parentKey="pvpRankBtn">
+                        <Size x="80" y="22"/>
+                        <Anchors>
+                            <Anchor point="LEFT" relativePoint="LEFT" x="430" y="0"/>
+                        </Anchors>
+                        <NormalFont inherits="GameFontNormalSmall" color="1 0.82 0"/>
+                        <NormalText>PvP Rank</NormalText>
+                        <Scripts>
+                            <OnClick>
+                                GuildPvPLadder.UI:SortBy("pvpRank")
+                            </OnClick>
+                        </Scripts>
+                    </Button>
+                </Frames>
+            </Frame>
+
+            <!-- Divider line under headers -->
+            <Frame name="$parentDivider" parentKey="divider">
+                <Size x="520" y="2"/>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="15" y="-56"/>
+                </Anchors>
+                <Layers>
+                    <Layer level="ARTWORK">
+                        <Texture name="$parentTex">
+                            <Color r="0.5" g="0.5" b="0.5" a="0.6"/>
+                        </Texture>
+                    </Layer>
+                </Layers>
+            </Frame>
+
+            <!-- Search Box -->
+            <EditBox name="GuildPvPLadderSearch"
+                     parentKey="searchBox"
+                     autoFocus="false"
+                     letters="64">
+                <Size x="180" y="20"/>
+                <Anchors>
+                    <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="15" y="40"/>
+                </Anchors>
+                <Backdrop bgFile="Interface\ChatFrame\ChatFrameBackground"
+                          edgeFile="Interface\ChatFrame\ChatFrameBackground"
+                          tile="true">
+                    <BackgroundInsets>
+                        <AbsInset left="2" right="2" top="2" bottom="2"/>
+                    </BackgroundInsets>
+                    <TileSize>
+                        <AbsValue val="8"/>
+                    </TileSize>
+                    <EdgeSize>
+                        <AbsValue val="1"/>
+                    </EdgeSize>
+                    <Color r="0" g="0" b="0" a="0.5"/>
+                    <BorderColor r="0.3" g="0.3" b="0.3" a="0.8"/>
+                </Backdrop>
+                <FontString inherits="ChatFontNormal"/>
+                <Scripts>
+                    <OnTextChanged>
+                        GuildPvPLadder.UI:FilterRows(self:GetText())
+                    </OnTextChanged>
+                    <OnEscapePressed>
+                        self:SetText("")
+                        self:ClearFocus()
+                    </OnEscapePressed>
+                    <OnEditFocusGained>
+                        if self:GetText() == "Search..." then
+                            self:SetText("")
+                            self:SetTextColor(1, 1, 1, 1)
+                        end
+                    </OnEditFocusGained>
+                    <OnEditFocusLost>
+                        if self:GetText() == "" then
+                            self:SetText("Search...")
+                            self:SetTextColor(0.5, 0.5, 0.5, 1)
+                        end
+                    </OnEditFocusLost>
+                    <OnLoad>
+                        self:SetText("Search...")
+                        self:SetTextColor(0.5, 0.5, 0.5, 1)
+                    </OnLoad>
+                </Scripts>
+            </EditBox>
+
+            <!-- Scroll Frame -->
+            <ScrollFrame name="GuildPvPLadderScrollFrame"
+                         parentKey="scrollFrame"
+                         inherits="UIPanelScrollFrameTemplate">
+                <Size x="520" y="280"/>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="15" y="-60"/>
+                </Anchors>
+                <ScrollChild>
+                    <Frame name="GuildPvPLadderScrollChild" parentKey="scrollChild">
+                        <Size x="500" y="560"/>
+                    </Frame>
+                </ScrollChild>
+            </ScrollFrame>
+
+            <!-- Bottom Buttons -->
+            <Button name="$parentRefreshBtn"
+                    parentKey="refreshBtn"
+                    inherits="UIPanelButtonTemplate"
+                    text="Refresh">
+                <Size x="80" y="22"/>
+                <Anchors>
+                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-15" y="10"/>
+                </Anchors>
+                <Scripts>
+                    <OnClick>
+                        if GuildPvPLadder.DataCollector then
+                            GuildPvPLadder.DataCollector:RequestGuildData()
+                        end
+                        GuildPvPLadder.UI:Refresh()
+                    </OnClick>
+                </Scripts>
+            </Button>
+
+            <Button name="$parentOptionsBtn"
+                    parentKey="optionsBtn"
+                    inherits="UIPanelButtonTemplate"
+                    text="Options">
+                <Size x="80" y="22"/>
+                <Anchors>
+                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-100" y="10"/>
+                </Anchors>
+                <Scripts>
+                    <OnClick>
+                        if GuildPvPLadder.Options then
+                            GuildPvPLadder.Options:Toggle()
+                        end
+                    </OnClick>
+                </Scripts>
+            </Button>
+
+            <Button name="$parentMyStatsBtn"
+                    parentKey="myStatsBtn"
+                    inherits="UIPanelButtonTemplate"
+                    text="My Stats">
+                <Size x="80" y="22"/>
+                <Anchors>
+                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-185" y="10"/>
+                </Anchors>
+                <Scripts>
+                    <OnClick>
+                        GuildPvPLadder.UI:ShowMyStats()
+                    </OnClick>
+                </Scripts>
+            </Button>
+        </Frames>
+
+        <Scripts>
+            <OnLoad>
+                self:RegisterForDrag("LeftButton")
+            </OnLoad>
+            <OnDragStart>
+                self:StartMoving()
+            </OnDragStart>
+            <OnDragStop>
+                self:StopMovingOrSizing()
+                GuildPvPLadder.UI:SaveWindowPosition()
+            </OnDragStop>
+            <OnKeyDown>
+                if key == "ESCAPE" then
+                    GuildPvPLadder.UI:Hide()
+                end
+            </OnKeyDown>
+        </Scripts>
+    </Frame>
+
+</Ui>

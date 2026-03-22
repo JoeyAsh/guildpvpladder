@@ -1,0 +1,19 @@
+## Interface: 120000
+## Title: GuildPvPLadder
+## Notes: Guild-wide PvP leaderboard with ratings and achievements.
+## Author:
+## Version: 1.0.0
+## SavedVariables: GuildPvPLadderDB
+## SavedVariablesPerCharacter: GuildPvPLadderCharDB
+
+Locale\enUS.lua
+Core\GuildManager.lua
+Core\RatingTracker.lua
+Core\AchievementTracker.lua
+Core\DataCollector.lua
+UI\Tooltips.lua
+UI\LadderRow.lua
+UI\MainFrame.xml
+UI\MainFrame.lua
+UI\Minimap.lua
+GuildPvPLadder.lua
