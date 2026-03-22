@@ -16,6 +16,7 @@ local BRACKET_INDEX = {
     ["3v3"]         = 2,
     ["rbg"]         = 4,
     ["soloshuffle"] = 7,
+    ["blitz"]       = 8,
 }
 
 -- Guild member inspect queue state
@@ -65,15 +66,16 @@ function DataCollector:CollectAndBroadcast()
     if not record then return end
 
     -- Build and send RATING_UPDATE message.
-    -- Format: RATING_UPDATE:Name-Realm|2v2|3v3|rbg|solo
+    -- Format: RATING_UPDATE:Name-Realm|2v2|3v3|rbg|solo|blitz
     local ratingMsg = string.format(
-        "RATING_UPDATE:%s-%s|%d|%d|%d|%d",
+        "RATING_UPDATE:%s-%s|%d|%d|%d|%d|%d",
         record.name,
         record.realm,
         record.ratings["2v2"]         or 0,
         record.ratings["3v3"]         or 0,
         record.ratings["rbg"]         or 0,
-        record.ratings["soloshuffle"] or 0
+        record.ratings["soloshuffle"] or 0,
+        record.ratings["blitz"]       or 0
     )
     C_ChatInfo.SendAddonMessage(ADDON_PREFIX, ratingMsg, "GUILD")
 
@@ -128,17 +130,24 @@ function DataCollector:HandleAddonMessage(prefix, message, channel, sender)
     -- RATING_UPDATE:Name-Realm|2v2|3v3|rbg|solo
     -- ------------------------------------------------------------------
     if msgType == "RATING_UPDATE" then
-        local nameRealm, r2v2, r3v3, rRBG, rSolo =
-            payload:match("^([^|]+)|(%d+)|(%d+)|(%d+)|(%d+)$")
+        -- Try new 5-value format first (with blitz), fall back to old 4-value format
+        local nameRealm, r2v2, r3v3, rRBG, rSolo, rBlitz =
+            payload:match("^([^|]+)|(%d+)|(%d+)|(%d+)|(%d+)|(%d+)$")
+        if not nameRealm then
+            nameRealm, r2v2, r3v3, rRBG, rSolo =
+                payload:match("^([^|]+)|(%d+)|(%d+)|(%d+)|(%d+)$")
+            rBlitz = "0"
+        end
         if not nameRealm then return end
 
         local key = nameRealm:lower()
         members[key] = members[key] or self:_StubRecord(nameRealm)
 
-        members[key].ratings["2v2"]         = tonumber(r2v2)  or 0
-        members[key].ratings["3v3"]         = tonumber(r3v3)  or 0
-        members[key].ratings["rbg"]         = tonumber(rRBG)  or 0
-        members[key].ratings["soloshuffle"] = tonumber(rSolo) or 0
+        members[key].ratings["2v2"]         = tonumber(r2v2)   or 0
+        members[key].ratings["3v3"]         = tonumber(r3v3)   or 0
+        members[key].ratings["rbg"]         = tonumber(rRBG)   or 0
+        members[key].ratings["soloshuffle"] = tonumber(rSolo)  or 0
+        members[key].ratings["blitz"]       = tonumber(rBlitz) or 0
         members[key].lastUpdated            = time()
 
     -- ------------------------------------------------------------------
@@ -226,6 +235,20 @@ function DataCollector:QueueGuildInspects()
     self:_NextInspect()
 end
 
+--- Return the unit ID ("party1", "raid2", …) for a GUID if the member is
+--- in our current group, otherwise return the GUID itself as a fallback.
+local function UnitIdForGUID(guid)
+    for i = 1, 4 do
+        local uid = "party" .. i
+        if UnitExists(uid) and UnitGUID(uid) == guid then return uid end
+    end
+    for i = 1, 40 do
+        local uid = "raid" .. i
+        if UnitExists(uid) and UnitGUID(uid) == guid then return uid end
+    end
+    return guid  -- fall back: pass GUID directly (works in retail TWW)
+end
+
 --- Pop the next GUID from the queue and request an inspect.
 --- Falls through automatically after 5 s if INSPECT_READY never fires.
 function DataCollector:_NextInspect()
@@ -236,7 +259,7 @@ function DataCollector:_NextInspect()
 
     local guid = table.remove(inspectQueue, 1)
     currentInspectGUID = guid
-    NotifyInspect(guid)
+    NotifyInspect(UnitIdForGUID(guid))
 
     -- Safety timeout: if the server never responds, advance the queue anyway.
     C_Timer.After(5, function()
@@ -247,13 +270,33 @@ function DataCollector:_NextInspect()
     end)
 end
 
---- Called from the INSPECT_READY handler.  Reads bracket ratings for the
---- inspected guild member and writes them into the DB.
-function DataCollector:OnMemberInspectReady(guid)
-    if guid ~= currentInspectGUID then return end
-    currentInspectGUID = nil  -- clear so timeout becomes a no-op
+--- Find the DB member key for a GUID.  Checks the pre-built map first,
+--- then falls back to scanning the full roster (covers user right-click
+--- inspects where we didn't queue the request ourselves).
+function DataCollector:_FindMemberKeyByGUID(guid)
+    if inspectGUIDToKey[guid] then
+        return inspectGUIDToKey[guid]
+    end
+    local GM    = GuildPvPLadder.GuildManager
+    local total = GetNumGuildMembers()
+    for i = 1, total do
+        local fullName, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, memberGUID =
+            GetGuildRosterInfo(i)
+        if memberGUID == guid and fullName then
+            local name, realm = GM:SplitFullName(fullName)
+            local key = GM:GetMemberKey(name, realm)
+            inspectGUIDToKey[guid] = key  -- cache for next time
+            return key
+        end
+    end
+    return nil
+end
 
-    local key = inspectGUIDToKey[guid]
+--- Called from the INSPECT_READY handler.
+--- Captures bracket ratings for ANY guild member inspect — whether we
+--- queued it ourselves or the user right-clicked and inspected someone.
+function DataCollector:OnMemberInspectReady(guid)
+    local key = self:_FindMemberKeyByGUID(guid)
     if key and self.db.members[key] then
         local record = self.db.members[key]
         for bracketName, bracketIdx in pairs(BRACKET_INDEX) do
@@ -268,10 +311,13 @@ function DataCollector:OnMemberInspectReady(guid)
         end
     end
 
-    -- Wait 1.5 s before next inspect to respect the server-side throttle.
-    C_Timer.After(1.5, function()
-        DataCollector:_NextInspect()
-    end)
+    -- If this was a queued inspect, clear the guard and advance the queue.
+    if guid == currentInspectGUID then
+        currentInspectGUID = nil
+        C_Timer.After(1.5, function()
+            DataCollector:_NextInspect()
+        end)
+    end
 end
 
 -- -------------------------------------------------------------------------
@@ -294,7 +340,7 @@ function DataCollector:_StubRecord(nameRealm)
         class         = "UNKNOWN",
         guildRank     = 0,
         guildRankName = "",
-        ratings       = { ["2v2"] = 0, ["3v3"] = 0, ["rbg"] = 0, ["soloshuffle"] = 0 },
+        ratings       = { ["2v2"] = 0, ["3v3"] = 0, ["rbg"] = 0, ["soloshuffle"] = 0, ["blitz"] = 0 },
         achievements  = {
             gladiator    = false,
             duelist      = false,

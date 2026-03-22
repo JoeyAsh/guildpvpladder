@@ -6,7 +6,7 @@ GuildPvPLadder.LadderRow = GuildPvPLadder.LadderRow or {}
 local LadderRow = GuildPvPLadder.LadderRow
 
 local ROW_HEIGHT   = 20
-local ROW_WIDTH    = 500
+local ROW_WIDTH    = 570
 
 -- Column x-offsets matching the header layout (left edge of each cell)
 local COL_X = {
@@ -17,7 +17,8 @@ local COL_X = {
     threev3   = 280,
     rbg       = 330,
     solo      = 380,
-    pvpRank   = 430,
+    blitz     = 430,
+    pvpRank   = 480,
 }
 
 -- Column widths
@@ -29,6 +30,7 @@ local COL_W = {
     threev3   = 48,
     rbg       = 48,
     solo      = 48,
+    blitz     = 48,
     pvpRank   = 78,
 }
 
@@ -95,6 +97,7 @@ function LadderRow:CreateRow(parent, index)
     row.cell3v3       = MakeCell(COL_X.threev3,   COL_W.threev3,   "CENTER")
     row.cellRBG       = MakeCell(COL_X.rbg,       COL_W.rbg,       "CENTER")
     row.cellSolo      = MakeCell(COL_X.solo,      COL_W.solo,      "CENTER")
+    row.cellBlitz     = MakeCell(COL_X.blitz,     COL_W.blitz,     "CENTER")
     row.cellPvPRank   = MakeCell(COL_X.pvpRank,   COL_W.pvpRank,   "LEFT")
 
     -- Tooltip scripts
@@ -150,6 +153,7 @@ function LadderRow:UpdateRow(rowFrame, rankNum, memberData)
     rowFrame.cell3v3:SetText(FormatRating(ratings["3v3"]))
     rowFrame.cellRBG:SetText(FormatRating(ratings["rbg"]))
     rowFrame.cellSolo:SetText(FormatRating(ratings["soloshuffle"]))
+    rowFrame.cellBlitz:SetText(FormatRating(ratings["blitz"]))
 
     -- Custom PvP Rank badge
     if memberData.customPvPRank and memberData.customPvPRank ~= "" then

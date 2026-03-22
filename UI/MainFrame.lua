@@ -15,6 +15,7 @@ local COLUMNS = {
     { key = "3v3",         label = "3v3",      width = 50  },
     { key = "rbg",         label = "RBG",      width = 50  },
     { key = "soloshuffle", label = "Solo",     width = 50  },
+    { key = "blitz",       label = "Blitz",    width = 50  },
     { key = "pvpRank",     label = "PvP Rank", width = 80  },
 }
 
@@ -62,9 +63,9 @@ function UI:Initialize(database)
         divider:SetPoint("LEFT", headerFrame, "LEFT", 228, 0)
         divider:SetColorTexture(0.5, 0.5, 0.5, 0.6)
 
-        -- Highlight the rating-column area with a subtle tinted strip
+        -- Highlight the rating-column area with a subtle tinted strip (5 cols × 50px)
         local ratingBg = headerFrame:CreateTexture(nil, "BACKGROUND", nil, -1)
-        ratingBg:SetSize(200, 22)
+        ratingBg:SetSize(250, 22)
         ratingBg:SetPoint("LEFT", headerFrame, "LEFT", 229, 0)
         ratingBg:SetColorTexture(0.1, 0.3, 0.4, 0.35)
 
@@ -78,6 +79,7 @@ function UI:Initialize(database)
             { btn = headerFrame.threev3Btn, text = "3v3",      r = 1 },
             { btn = headerFrame.rbgBtn,     text = "RBG",      r = 1 },
             { btn = headerFrame.soloBtn,    text = "Solo",     r = 1 },
+            { btn = headerFrame.blitzBtn,   text = "Blitz",    r = 1 },
             { btn = headerFrame.pvpRankBtn, text = "PvP Rank", r = 0 },
         }
         for _, def in ipairs(headerDefs) do
@@ -179,7 +181,7 @@ local function GetSortValue(member, key)
         return member.name or ""
     elseif key == "guildRank" then
         return member.guildRank or 99
-    elseif key == "2v2" or key == "3v3" or key == "rbg" or key == "soloshuffle" then
+    elseif key == "2v2" or key == "3v3" or key == "rbg" or key == "soloshuffle" or key == "blitz" then
         return (member.ratings and member.ratings[key]) or 0
     elseif key == "pvpRank" then
         return member.customPvPRank or ""
@@ -302,6 +304,7 @@ function UI:UpdateSortIndicators()
         ["3v3"]         = headerFrame.threev3Btn,
         ["rbg"]         = headerFrame.rbgBtn,
         ["soloshuffle"] = headerFrame.soloBtn,
+        ["blitz"]       = headerFrame.blitzBtn,
         ["pvpRank"]     = headerFrame.pvpRankBtn,
     }
 
@@ -313,11 +316,12 @@ function UI:UpdateSortIndicators()
         ["3v3"]         = "3v3",
         ["rbg"]         = "RBG",
         ["soloshuffle"] = "Solo",
+        ["blitz"]       = "Blitz",
         ["pvpRank"]     = "PvP Rank",
     }
 
     -- Rating columns get a brighter/distinct colour so they stand out
-    local ratingKeys = { ["2v2"] = true, ["3v3"] = true, ["rbg"] = true, ["soloshuffle"] = true }
+    local ratingKeys = { ["2v2"] = true, ["3v3"] = true, ["rbg"] = true, ["soloshuffle"] = true, ["blitz"] = true }
 
     for key, btn in pairs(keyToBtn) do
         if btn then

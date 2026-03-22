@@ -72,7 +72,7 @@ local function NewMemberRecord(name, realm, classFileName, rankIndex, rankName)
         class         = classFileName or "UNKNOWN",
         guildRank     = rankIndex     or 0,
         guildRankName = rankName      or "",
-        ratings       = { ["2v2"] = 0, ["3v3"] = 0, ["rbg"] = 0, ["soloshuffle"] = 0 },
+        ratings       = { ["2v2"] = 0, ["3v3"] = 0, ["rbg"] = 0, ["soloshuffle"] = 0, ["blitz"] = 0 },
         achievements  = {
             gladiator    = false,
             duelist      = false,

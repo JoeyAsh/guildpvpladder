@@ -12,7 +12,7 @@
            hidden="true"
            clampedToScreen="true"
            inherits="BackdropTemplate">
-        <Size x="550" y="400"/>
+        <Size x="620" y="400"/>
         <Anchors>
             <Anchor point="CENTER" relativeTo="UIParent" relativePoint="CENTER"/>
         </Anchors>
@@ -33,7 +33,7 @@
         <Frames>
             <!-- Title Bar -->
             <Frame name="$parentTitleBar" parentKey="titleBar">
-                <Size x="550" y="28"/>
+                <Size x="620" y="28"/>
                 <Anchors>
                     <Anchor point="TOP" relativePoint="TOP" x="0" y="-4"/>
                 </Anchors>
@@ -64,7 +64,7 @@
 
             <!-- Column Headers -->
             <Frame name="$parentHeaders" parentKey="headers">
-                <Size x="520" y="24"/>
+                <Size x="590" y="24"/>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="15" y="-32"/>
                 </Anchors>
@@ -174,11 +174,26 @@
                         </Scripts>
                     </Button>
 
+                    <!-- Blitz Column (Battleground Blitz / Solo RBG) -->
+                    <Button name="$parentBlitz" parentKey="blitzBtn">
+                        <Size x="50" y="22"/>
+                        <Anchors>
+                            <Anchor point="LEFT" relativePoint="LEFT" x="430" y="0"/>
+                        </Anchors>
+                        <NormalFont inherits="GameFontNormalSmall" color="1 0.82 0"/>
+                        <NormalText>Blitz</NormalText>
+                        <Scripts>
+                            <OnClick>
+                                GuildPvPLadder.UI:SortBy("blitz")
+                            </OnClick>
+                        </Scripts>
+                    </Button>
+
                     <!-- PvP Rank Column -->
                     <Button name="$parentPvPRank" parentKey="pvpRankBtn">
                         <Size x="80" y="22"/>
                         <Anchors>
-                            <Anchor point="LEFT" relativePoint="LEFT" x="430" y="0"/>
+                            <Anchor point="LEFT" relativePoint="LEFT" x="480" y="0"/>
                         </Anchors>
                         <NormalFont inherits="GameFontNormalSmall" color="1 0.82 0"/>
                         <NormalText>PvP Rank</NormalText>
@@ -193,7 +208,7 @@
 
             <!-- Divider line under headers -->
             <Frame name="$parentDivider" parentKey="divider">
-                <Size x="520" y="2"/>
+                <Size x="590" y="2"/>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="15" y="-56"/>
                 </Anchors>
@@ -262,13 +277,13 @@
             <ScrollFrame name="GuildPvPLadderScrollFrame"
                          parentKey="scrollFrame"
                          inherits="UIPanelScrollFrameTemplate">
-                <Size x="520" y="280"/>
+                <Size x="590" y="280"/>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="15" y="-60"/>
                 </Anchors>
                 <ScrollChild>
                     <Frame name="GuildPvPLadderScrollChild" parentKey="scrollChild">
-                        <Size x="500" y="560"/>
+                        <Size x="570" y="560"/>
                     </Frame>
                 </ScrollChild>
             </ScrollFrame>

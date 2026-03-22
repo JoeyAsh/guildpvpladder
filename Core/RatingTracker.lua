@@ -21,6 +21,7 @@ local BRACKET_INDEX = {
     ["3v3"]         = 2,
     ["rbg"]         = 4,
     ["soloshuffle"] = 7,
+    ["blitz"]       = 8,  -- Battleground Blitz (Solo RBG), added in TWW 11.0
 }
 
 -- -------------------------------------------------------------------------
@@ -101,7 +102,7 @@ function RatingTracker:UpdateMyRatings()
             class         = select(2, UnitClass("player")) or "UNKNOWN",
             guildRank     = 0,
             guildRankName = "",
-            ratings       = { ["2v2"] = 0, ["3v3"] = 0, ["rbg"] = 0, ["soloshuffle"] = 0 },
+            ratings       = { ["2v2"] = 0, ["3v3"] = 0, ["rbg"] = 0, ["soloshuffle"] = 0, ["blitz"] = 0 },
             achievements  = {
                 gladiator    = false,
                 duelist      = false,
@@ -122,5 +123,6 @@ function RatingTracker:UpdateMyRatings()
     record.ratings["3v3"]         = ratings["3v3"]
     record.ratings["rbg"]         = ratings["rbg"]
     record.ratings["soloshuffle"] = ratings["soloshuffle"]
+    record.ratings["blitz"]       = ratings["blitz"]
     record.lastUpdated            = time()
 end
